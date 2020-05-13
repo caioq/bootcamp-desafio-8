@@ -43,18 +43,34 @@ const CartProvider: React.FC = ({ children }) => {
     loadProducts();
   }, []);
 
-  const addToCart = useCallback(
-    async product => {
-      // TODO ADD A NEW ITEM TO THE CART
-      const productIndex = products.findIndex(item => item.id === product.id);
-
-      products[productIndex].quantity += 1;
-
-      setProducts(products);
+  useEffect(() => {
+    async function updateStoredProducts(): Promise<void> {
       await AsyncStorage.setItem(
-        '@GoMarketPlace:products1',
+        '@GoMarketplace:products1',
         JSON.stringify(products),
       );
+    }
+
+    updateStoredProducts();
+  }, [products]);
+
+  const addToCart = useCallback(
+    async ({ id, title, image_url, price }: Product) => {
+      // TODO ADD A NEW ITEM TO THE CART
+      const productIndex = products.findIndex(item => item.id === id);
+
+      if (productIndex > -1) {
+        products[productIndex].quantity += 1;
+
+        setProducts(products);
+      } else {
+        const newCart = [
+          ...products,
+          { id, title, image_url, price, quantity: 1 },
+        ];
+
+        setProducts(newCart);
+      }
     },
     [products],
   );
@@ -67,11 +83,6 @@ const CartProvider: React.FC = ({ children }) => {
       products[productIndex].quantity += 1;
 
       setProducts(products);
-
-      await AsyncStorage.setItem(
-        '@GoMarketPlace:products1',
-        JSON.stringify(products),
-      );
     },
     [products],
   );
@@ -85,18 +96,9 @@ const CartProvider: React.FC = ({ children }) => {
         products[productIndex].quantity -= 1;
 
         setProducts(products);
-
-        await AsyncStorage.setItem(
-          '@GoMarketPlace:products1',
-          JSON.stringify(products),
-        );
       } else {
-        // const cartProducts = products.filter(item => item.id !== id);
-        // setProducts(cartProducts);
-        // await AsyncStorage.setItem(
-        //   '@GoMarketPlace:products1',
-        //   JSON.stringify(cartProducts),
-        // );
+        const cartProducts = products.filter(item => item.id !== id);
+        setProducts(cartProducts);
       }
     },
     [products],

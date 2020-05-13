@@ -1,7 +1,7 @@
-import React, { useMemo, useEffect, useState } from 'react';
+import React, { useMemo, useRef } from 'react';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 
-import { View } from 'react-native';
+import { View, Text } from 'react-native';
 
 import {
   Container,
@@ -37,6 +37,8 @@ interface Product {
 
 const Cart: React.FC = () => {
   const { increment, decrement, products } = useCart();
+
+  // const productQuantityRef = useRef<Text>(null);
 
   function handleIncrement(id: string): void {
     increment(id);
