@@ -37,7 +37,7 @@ const Dashboard: React.FC = () => {
     async function loadProducts(): Promise<void> {
       const response = await api.get<Product[]>('/products');
 
-      setProducts(response.data);
+      setProducts([...response.data]);
     }
 
     loadProducts();
@@ -47,11 +47,10 @@ const Dashboard: React.FC = () => {
     // TODO
     const newProductToCart = {
       ...item,
-      quantity: 0,
     };
     // console.log('ADD TO CART', newProductToCart);
 
-    addToCart(newProductToCart);
+    addToCart(item);
   }
 
   return (
